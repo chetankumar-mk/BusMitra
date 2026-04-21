@@ -18,6 +18,8 @@ const protect = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.log('❌ JWT Verification Failed:', error.message);
+    console.log('Secret Length:', process.env.JWT_SECRET?.length || 0);
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired' });
     }
