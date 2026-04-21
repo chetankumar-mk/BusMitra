@@ -2,6 +2,7 @@
 const express = require('express')
 const http = require('http')
 const cors = require('cors')
+const https = require('https')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const { initSocket } = require('./src/socket/index.js')
@@ -68,6 +69,18 @@ mongoose.connect(process.env.MONGODB_URI)
     console.log('✅ MongoDB connected')
     server.listen(process.env.PORT || 5000, '0.0.0.0', () => {
       console.log('🚀 Server running on port ' + (process.env.PORT || 5000))
+      
+      // ⏰ SELF-PING KEEP-ALIVE (Option A)
+      const keepAlive = () => {
+        const url = process.env.RENDER_EXTERNAL_URL
+        if (!url) return
+        https.get(url + '/api/health', (res) => {
+          console.log(`⏰ [${new Date().toLocaleTimeString()}] Keep-alive ping sent [${res.statusCode}]`)
+        }).on('error', (err) => {
+          console.log('❌ Keep-alive ping failed:', err.message)
+        })
+      }
+      setInterval(keepAlive, 14 * 60 * 1000)
     })
   })
   .catch((err) => {
