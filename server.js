@@ -9,6 +9,16 @@ const { initSocket } = require('./src/socket/index.js')
 
 dotenv.config()
 
+// --- ENVIRONMENT CHECK ---
+const requiredEnv = ['MONGODB_URI', 'JWT_SECRET'];
+requiredEnv.forEach(envVar => {
+  if (!process.env[envVar]) {
+    console.error(`❌ CRITICAL ERROR: Environment variable ${envVar} is missing!`);
+  }
+});
+console.log('🔑 JWT Secret Check:', process.env.JWT_SECRET ? 'PRESENT (First 2 chars: ' + process.env.JWT_SECRET.substring(0, 2) + ')' : 'MISSING');
+// -----------------------
+
 // 🔥 FIREBASE ADMIN INITIALIZATION
 const { firebaseDB } = require('./src/firebase_admin');
 
